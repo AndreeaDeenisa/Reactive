@@ -1,0 +1,10 @@
+module.exports = app => {
+    const users = require("../controllers/user.controller.js")
+    app.post("/user", users.createUser)
+    app.get("/user", users.findUser)
+    app.delete("/user", users.deleteUser)
+    app.put("/user", users.changeUser)
+    app.get("/activate/:token", users.activateUser)
+    app.post("/resetpassword", users.resetPassword)
+    app.post("/reset/:token", users.reset)
+}
