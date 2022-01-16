@@ -40,7 +40,23 @@ async function check(username, password) {
     let user = await User.findOne({ "username": username })
     if (!user)
         return false
-    return bcrypt.compareSync(password, user.password)
+    return bcrypt.compareSync(password, user.password) && await activated(username)
+}
+
+async function activated(username) {
+    let user = await User.findOne({ "username": username })
+    return user.active != false
+}
+
+exports.login = async (req, res) => {
+    console.log(req.body.username, req.body.password)
+    if (!req.body.username || !req.body.password)
+        res.status(500).send("Invalid request")
+    let x = await check(req.body.username, req.body.password)
+    if (x)
+        res.status(200).send(x)
+    else
+        res.status(401).send(x)
 }
 
 //dupa ce verifica daca toate campurile sunt completate, daca username-ul nu este deja existent, iar parola respecta conditiile, se incearca trimiterea pe email a token-ului de activare al contului si se creeaza contul
@@ -99,7 +115,7 @@ exports.deleteUser = async (req, res) => {
     else if (!await check(req.body.username, req.body.password))
         res.status(401).send("Username sau parola invalida.")
     else
-        User.deleteOne({ "username": req.body.username }).then(_ => res.send({ message: `Contul utilizatorului ${req.body.username} a fost sters.` }))
+        User.deleteOne({ "username": req.body.username }).then(_ => res.status(200).send({ message: `Contul utilizatorului ${req.body.username} a fost sters.` }))
             .catch(_ => { res.status(500).send({ message: `Utilizatorul ${req.body.username} nu a putut fi sters (internal error).` }) })
 }
 
