@@ -7,7 +7,7 @@ module.exports = {
         service: "gmail",
         auth: {
             user: "testTechWeb.dee@gmail.com",
-            pass: "testtw123"
+            pass: "testtw1234"
         },
         tls: {
             rejectUnauthorized: false
