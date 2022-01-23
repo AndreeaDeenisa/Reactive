@@ -49,7 +49,6 @@ async function activated(username) {
 }
 
 exports.login = async (req, res) => {
-    console.log(req.body.username, req.body.password)
     if (!req.body.username || !req.body.password)
         res.status(500).send("Invalid request")
     let x = await check(req.body.username, req.body.password)
@@ -69,7 +68,7 @@ exports.createUser = async (req, res) => {
         res.status(500).send("Parola trebuie sa contina minimum 8 caractere, cel putin o litera, o cifra si un caracter special.")
     else {
         let token = generate_token(config.tokenLength)
-        if (await Mail.send(req.body.email, "localhost:3000/activate/" + token)) {
+        if (await Mail.send(req.body.email, "reactive-backend/activate/" + token)) {
             let user = new User({
                 username: req.body.username,
                 password: bcrypt.hashSync(req.body.password, config.saltOrRounds),
@@ -135,7 +134,7 @@ exports.changeUser = async (req, res) => {
             querry["email"] = req.body.email
             querry["active"] = false
             const token = generate_token(config.tokenLength)
-            if (await Mail.send(req.body.email, "localhost:3000/activate/" + token))
+            if (await Mail.send(req.body.email, "reactive-backend/activate/" + token))
                 querry["activationToken"] = token
             else {
                 res.status(500).send("Email-ul nu s-a putut trimite.")
@@ -158,7 +157,7 @@ exports.resetPassword = async (req, res) => {
             res.status(500).send("Utilizatorul nu exista.")
         else {
             const token = generate_token(config.tokenLength)
-            if (await Mail.send(user.email, "localhost:3000/reset/" + token)) {
+            if (await Mail.send(user.email, "reactive-backend/reset/" + token)) {
                 await User.findByIdAndUpdate(user.id, { passwordToken: token })
                 res.status(200).send("Verifica email-ul.")
             }
