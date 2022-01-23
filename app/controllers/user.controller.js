@@ -68,7 +68,7 @@ exports.createUser = async (req, res) => {
         res.status(500).send("Parola trebuie sa contina minimum 8 caractere, cel putin o litera, o cifra si un caracter special.")
     else {
         let token = generate_token(config.tokenLength)
-        if (await Mail.send(req.body.email, "reactive-backend/activate/" + token)) {
+        if (await Mail.send(req.body.email, "https://reactive-backend.herokuapp.com/activate/" + token)) {
             let user = new User({
                 username: req.body.username,
                 password: bcrypt.hashSync(req.body.password, config.saltOrRounds),
@@ -134,7 +134,7 @@ exports.changeUser = async (req, res) => {
             querry["email"] = req.body.email
             querry["active"] = false
             const token = generate_token(config.tokenLength)
-            if (await Mail.send(req.body.email, "reactive-backend/activate/" + token))
+            if (await Mail.send(req.body.email, "https://reactive-backend.herokuapp.com/activate/" + token))
                 querry["activationToken"] = token
             else {
                 res.status(500).send("Email-ul nu s-a putut trimite.")
@@ -157,7 +157,7 @@ exports.resetPassword = async (req, res) => {
             res.status(500).send("Utilizatorul nu exista.")
         else {
             const token = generate_token(config.tokenLength)
-            if (await Mail.send(user.email, "reactive-backend/reset/" + token)) {
+            if (await Mail.send(user.email, "https://reactive-backend.herokuapp.com/reset/" + token)) {
                 await User.findByIdAndUpdate(user.id, { passwordToken: token })
                 res.status(200).send("Verifica email-ul.")
             }
